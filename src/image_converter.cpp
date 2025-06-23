@@ -1,6 +1,6 @@
 #include "theta_s_ros/image_converter.hpp"
 
-#include "opencv_theta_s/EquirectangularConversion/ThetaConversion.hpp"
+#include "opencv_theta_s_param/EquirectangularConversion/ThetaConversion.hpp"
 #include "panorama2cubemap/src/Panorama2Cubemap.hpp"
 
 namespace theta_s_ros {
