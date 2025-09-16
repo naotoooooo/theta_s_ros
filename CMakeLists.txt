@@ -32,7 +32,7 @@ include_directories(
 
 add_library(${PROJECT_NAME}
   src/image_converter_nodelet.cpp
-  include/opencv_theta_s_param/EquirectangularConversion/ThetaConversion.cpp
+  include/opencv_theta_s/EquirectangularConversion/ThetaConversion.cpp
   include/panorama2cubemap/src/Panorama2Cubemap.cpp
 )
 target_link_libraries(${PROJECT_NAME}
@@ -43,7 +43,7 @@ target_link_libraries(${PROJECT_NAME}
 add_executable(
   image_converter
   src/image_converter.cpp
-  include/opencv_theta_s_param/EquirectangularConversion/ThetaConversion.cpp
+  include/opencv_theta_s/EquirectangularConversion/ThetaConversion.cpp
   include/panorama2cubemap/src/Panorama2Cubemap.cpp
 )
 target_link_libraries(image_converter
@@ -54,7 +54,7 @@ target_link_libraries(image_converter
 add_executable(
   rosbag_converter
   src/rosbag_converter.cpp
-  include/opencv_theta_s_param/EquirectangularConversion/ThetaConversion.cpp
+  include/opencv_theta_s/EquirectangularConversion/ThetaConversion.cpp
   include/panorama2cubemap/src/Panorama2Cubemap.cpp
 )
 target_link_libraries(rosbag_converter
