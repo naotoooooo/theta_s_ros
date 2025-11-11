@@ -1,78 +1,47 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.8)
 project(theta_s_ros)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O2 -pthread")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -O0 -pthread")
 
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  rosbag
-  std_msgs
-  sensor_msgs
-  cv_bridge
-  pluginlib
-  nodelet
-)
-find_package(Boost REQUIRED COMPONENTS)
-find_package(OpenCV REQUIRED)
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
 
-catkin_package(
-  INCLUDE_DIRS include
-#  LIBRARIES theta_s_ros
-#  CATKIN_DEPENDS other_catkin_pkg
-#  DEPENDS system_lib
-)
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
 
-include_directories(
-  include
-  ${catkin_INCLUDE_DIRS}
-  ${Boost_INCLUDE_DIRS}
-  ${OpenCV_INCLUDE_DIRS}
-)
+find_package(ament_cmake_auto REQUIRED)
+ament_auto_find_build_dependencies()
 
-add_library(${PROJECT_NAME}
-  src/image_converter_nodelet.cpp
-  include/opencv_theta_s/EquirectangularConversion/ThetaConversion.cpp
-  include/panorama2cubemap/src/Panorama2Cubemap.cpp
-)
-target_link_libraries(${PROJECT_NAME}
-  ${catkin_LIBRARIES}
-  ${OpenCV_LIBRARIES}
-)
-
-add_executable(
-  image_converter
+ament_auto_add_executable(${PROJECT_NAME}
   src/image_converter.cpp
   include/opencv_theta_s/EquirectangularConversion/ThetaConversion.cpp
   include/panorama2cubemap/src/Panorama2Cubemap.cpp
 )
-target_link_libraries(image_converter
-  ${catkin_LIBRARIES}
-  ${OpenCV_LIBRARIES}
+
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}
 )
 
-add_executable(
-  rosbag_converter
-  src/rosbag_converter.cpp
-  include/opencv_theta_s/EquirectangularConversion/ThetaConversion.cpp
-  include/panorama2cubemap/src/Panorama2Cubemap.cpp
-)
-target_link_libraries(rosbag_converter
-  ${catkin_LIBRARIES}
-  ${Boost_LIBRARIES}
-  ${OpenCV_LIBRARIES}
-)
+find_package(Boost REQUIRED COMPONENTS)
+find_package(OpenCV REQUIRED)
+find_package(cv_bridge REQUIRED)
 
-install(TARGETS ${PROJECT_NAME} image_converter rosbag_converter
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# 依存関係を追加
+ament_target_dependencies(${PROJECT_NAME}
+  OpenCV
+  cv_bridge
 )
 
 install(FILES nodelet_description.xml
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+  DESTINATION share/${PROJECT_NAME}
 )
 
-install(DIRECTORY launch
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
+# コード品質を自動的にチェック
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  set(ament_cmake_copyright_FOUND TRUE)
+  ament_lint_auto_find_test_dependencies()
+endif()
+
+ament_auto_package()
